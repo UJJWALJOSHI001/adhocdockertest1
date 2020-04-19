@@ -1,4 +1,10 @@
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: uv
+
+---
+apiVersion: v1
 kind: Pod
 metadata:
   namespace: uv
