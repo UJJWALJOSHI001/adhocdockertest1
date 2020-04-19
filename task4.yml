@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+        namespace: uv
+        name: uvdb
+        labels:
+              app: my-db
+spec:  
+        template:
+           metadata:
+              name: uvpod11
+              labels:
+                app: my-db
+           spec: 
+                containers:
+                   - image: mysql
+                     name: mysql
+                     env:
+                      - name: MYSQL_ROOT_PASSWORD
+                        valueFrom:
+                          secretKeyRef:
+                             name: mysql-pass
+                             key: password
+                restartPolicy: Always
+        selector:
+           matchLabels:
+                app: my-db
+        replicas: 1
+---
+apiVersion: v1
+data:
+  password: UmVkaGF0QDEyMw==
+kind: Secret
+metadata:
+  namespace: uv
+  creationTimestamp: null
+  name: mysql-pass
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: uv
+  labels:
+    app: my-db
+  name: uvdb
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  selector:
+    app: my-db
+  type: ClusterIP
